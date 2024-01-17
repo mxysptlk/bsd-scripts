@@ -1,0 +1,2 @@
+#! /bin/sh
+ldapsearch -Z -x -LLL -o ldif-wrap=no "(&(objectClass=posixAccount)(uid=$1))" | grep sshPublicKey: | cut -d" " -f 2-4
