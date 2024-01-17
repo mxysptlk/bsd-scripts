@@ -1,0 +1,3 @@
+TZ=UTC
+lockf /var/run/sanoid.lock sanoid --take-snapshots --quiet
+lockf /var/run/sanoid.lock sanoid --prune-snapshots --quiet
