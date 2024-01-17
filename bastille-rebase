@@ -1,0 +1,72 @@
+#!/bin/sh
+# 
+# Usage
+
+CMD=/usr/local/bin/bastille
+. /usr/local/etc/bastille/bastille.conf
+usage ()
+{
+# if argument passed to function echo it
+[ -z "${1}" ] || echo "! ${1}"
+
+echo "\
+# Rebase a bastille jail to a different bootstraped release
+
+$(basename "$0") jail new-release [-f]
+if given, the '-f' flag will force bootsraping of pkg and upgrading of packages"
+exit 2
+}
+
+validate_jail ()
+{
+if  ! jls -j $JAIL > /dev/null 2>&1;
+then
+    echo jail \'$JAIL\' does not exits!
+    exit 2
+fi
+}
+
+validate_release ()
+{
+if [ ! -e $bastille_releasesdir/$RELEASE ];
+then
+    echo release \'$RELEASE\' not found. Bootstraped releases are:
+    $CMD list releases
+    exit 2
+fi
+}
+# check jail's fstab to see which release it is based on
+get_jail_release ()
+{
+    CURRENT=$(grep "$bastille_prefix"/releases "$_jail_path"/fstab | awk '{n=split($1,a,"/");print a[n];}')
+}
+# check for correct number of args
+if [ ! $# -gt 1 -a $# -lt 4 ]; then
+    usage
+fi
+JAIL=$1
+validate_jail
+shift
+RELEASE=$1
+validate_release
+shift
+if [ $1 = "-f" ]; then
+    FORCE=true
+else
+    FORCE=false
+fi
+
+_jail_path=$(jls -j "$JAIL" path | sed 's/root//')
+
+get_jail_release
+
+bastille stop $JAIL
+sed -i -e s/$CURRENT/$RELEASE/g $_jail_path/fstab
+bastille start $JAIL
+if $FORCE; then
+    bastille cmd $JAIL pkg-static install -f -y pkg 
+    bastille pkg $JAIL upgrade -f -y
+    bastille restart $JAIL
+else
+    bastille pkg $JAIL upgrade
+fi
