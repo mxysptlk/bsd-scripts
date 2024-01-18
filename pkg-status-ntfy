@@ -1,8 +1,8 @@
 #!/bin/sh 
 topic_url=https://ntfy.citisyn.net/net-notify-citisyn-net
 tmp_file=/tmp/_pkgupdates_
-
-pkg version -v | grep "needs updating" | awk '{print $1}'> $tmp_file
+pkg update
+pkg version -vR | grep "needs updating" | awk '{print $1}'> $tmp_file
 pkg_updates=$(wc -l $tmp_file | awk '{print $1}')
 if [ $pkg_updates -gt 0 ]; then
     curl -H "Title: $pkg_updates updates available for $(hostname)" \
