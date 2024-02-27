@@ -2,10 +2,10 @@
 topic_url=https://ntfy.citisyn.net/net-notify-citisyn-net
 tmp_file=/tmp/_pkgupdates_
 pkg update
-pkg version -vR | grep "needs updating" | awk '{print $1}'> $tmp_file
+pkg version -vR | grep -v "FreeBSD-" | grep "needs updating" | awk '{print $1}'> $tmp_file
 pkg_updates=$(wc -l $tmp_file | awk '{print $1}')
 if [ $pkg_updates -gt 0 ]; then
-    curl -H "Title: $pkg_updates updates available for $(hostname)" \
+    curl -H "Title: $pkg_updates updates available for $(hostname -s)" \
         -d @$tmp_file $topic_url > /dev/null
 fi
 rm $tmp_file
