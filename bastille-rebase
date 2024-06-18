@@ -68,5 +68,5 @@ if $FORCE; then
     bastille pkg $JAIL upgrade -f -y
     bastille restart $JAIL
 else
-    bastille pkg $JAIL upgrade
+    bastille pkg $JAIL upgrade -y
 fi
