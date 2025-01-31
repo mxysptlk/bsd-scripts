@@ -50,7 +50,7 @@ shift
 RELEASE=$1
 validate_release
 shift
-if [ $1 = "-f" ]; then
+if [ "$1" = "-f" ]; then
     FORCE=true
 else
     FORCE=false
