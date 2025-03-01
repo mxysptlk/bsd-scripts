@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+#
+
+# PROVIDE: remote_zpool
+# REQUIRE:iscsictl
+# BEFORE:  DAEMON
+# KEYWORD: nojail
+
+. /etc/rc.subr
+
+name="remote_zpool"
+desc="mount ISCSI connected zpools"
+rcvar="remote_zpool_enable"
+command="/sbin/zpool"
+
+command_args="import -a"
+required_modules="iscsi zfs"
+
+load_rc_config $name
+run_rc_command "$1"
